@@ -70,6 +70,7 @@ const Arena = ({ characterNFT }) => {
             {characterNFT && (
                 <div className='players-container'>
                     <div className='player-container'>
+                        <h2>Your Character</h2>
                         <div className='player'>
                             <div className='image-content'>
                                 <h2>{characterNFT.characterName}</h2>

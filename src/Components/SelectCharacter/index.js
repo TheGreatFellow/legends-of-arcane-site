@@ -30,7 +30,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
                 <div className='name-container'>
                     <p>{character.characterName}</p>
                 </div>
-                <img src={character.imageURL} alt={character.name} />
+                <img src={character.imageURL} alt={character.characterName} />
                 <button
                     type='button'
                     className='character-mint-button'

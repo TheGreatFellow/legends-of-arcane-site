@@ -51,8 +51,8 @@ const App = () => {
             return (
                 <div className='connect-wallet-container'>
                     <img
-                        src='https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv'
-                        alt='Monty Python Gif'
+                        src='https://media1.giphy.com/media/HODJLQURRo4wAcDcVu/giphy.gif?cid=ecf05e47it9qdg8podke7c74l7gnhdqyooddhwk1gqbwnbxo&rid=giphy.gif'
+                        alt='Vi and Jinx Gif'
                     />
                     <button
                         className='cta-button connect-wallet-button'
