@@ -26,7 +26,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
 
     const renderCharacters = () =>
         characters.map((character, index) => (
-            <div className='character-item' key={character.name}>
+            <div className='character-item' key={index}>
                 <div className='name-container'>
                     <p>{character.characterName}</p>
                 </div>
@@ -89,8 +89,9 @@ const SelectCharacter = ({ setCharacterNFT }) => {
                 console.log('CharacterNFT: ', characterNFT)
                 setCharacterNFT(transformCharacterData(characterNFT))
                 alert(
-                    `Your NFT is all done -- see it here: https://testnets.opensea.io/assets/${gameContract}/${tokenId.toNumber()}`
+                    `Your NFT is all done -- see it here: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`
                 )
+                gameContract.on('CharacterNFTMinted', onCharacterMint)
             }
         }
 
@@ -99,9 +100,6 @@ const SelectCharacter = ({ setCharacterNFT }) => {
             gameContract.on('CharacterNFTMinted', onCharacterMint) //mint listener
         }
         return () => {
-            /*
-             * When your component unmounts, let;s make sure to clean up this listener
-             */
             if (gameContract) {
                 gameContract.off('CharacterNFTMinted', onCharacterMint)
             }

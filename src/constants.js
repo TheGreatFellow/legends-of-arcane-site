@@ -9,7 +9,6 @@ const transformCharacterData = (characterData) => {
         attackDamage: characterData.attackDamage.toNumber(),
         origin: characterData.origin,
         specialAttack: characterData.specialAttack,
-        level: characterData.level.toNumber(),
     }
 }
 

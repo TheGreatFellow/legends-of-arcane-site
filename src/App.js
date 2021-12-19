@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
 import { CONTRACT_ADDRESS, transformCharacterData } from './constants'
+
+import Arena from './Components/Arena'
 import myEpicGame from './utils/MyEpicGame.json'
 import SelectCharacter from './Components/SelectCharacter'
 import twitterLogo from './assets/twitter-logo.svg'
@@ -43,13 +45,14 @@ const App = () => {
             console.log(error)
         }
     }
+
     const renderContent = () => {
         if (!currentAccount) {
             return (
                 <div className='connect-wallet-container'>
                     <img
-                        src='https://media1.giphy.com/media/HODJLQURRo4wAcDcVu/giphy.gif?cid=ecf05e47it9qdg8podke7c74l7gnhdqyooddhwk1gqbwnbxo&rid=giphy.gif'
-                        alt='Vi and Jinx Gif'
+                        src='https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv'
+                        alt='Monty Python Gif'
                     />
                     <button
                         className='cta-button connect-wallet-button'
@@ -61,6 +64,8 @@ const App = () => {
             )
         } else if (currentAccount && !characterNFT) {
             return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+        } else if (currentAccount && characterNFT) {
+            return <Arena characterNFT={characterNFT} />
         }
     }
 
@@ -87,6 +92,7 @@ const App = () => {
         checkIfWalletIsConnected()
         checkNetwork()
     }, [])
+
     useEffect(() => {
         const fetchNFTMetadata = async () => {
             console.log(
