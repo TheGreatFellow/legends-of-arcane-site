@@ -3,13 +3,73 @@ import { ethers } from 'ethers'
 import { CONTRACT_ADDRESS, transformCharacterData } from '../../constants'
 import myEpicGame from '../../utils/MyEpicGame.json'
 import './Arena.css'
+import LoadingIndicator from '../LoadingIndicator'
 
-const Arena = ({ characterNFT }) => {
+const Arena = ({ characterNFT, setCharacterNFT }) => {
     const [gameContract, setGameContract] = useState(null)
-
     const [boss, setBoss] = useState(null)
+    const [attackState, setAttackState] = useState('')
+    const [showToast, setShowToast] = useState(false)
 
-    const runAttackAction = async () => {}
+    const runAttackAction = async () => {
+        try {
+            if (gameContract) {
+                setAttackState('attacking')
+                console.log('Attacking boss...')
+                const txn = await gameContract.attackBoss()
+                await txn.wait()
+                console.log(txn)
+                setAttackState('hit')
+
+                /*
+                 * Set your toast state to true and then false 5 seconds later
+                 */
+                setShowToast(true)
+                setTimeout(() => {
+                    setShowToast(false)
+                }, 5000)
+            }
+        } catch (error) {
+            console.error('Error attacking boss:', error)
+            setAttackState('')
+        }
+    }
+
+    useEffect(() => {
+        const fetchBoss = async () => {
+            const bossTxn = await gameContract.getBigBoss()
+            console.log('Boss:', bossTxn)
+            setBoss(transformCharacterData(bossTxn))
+        }
+
+        const onAttackComplete = (newBossHp, newPlayerHp) => {
+            const bossHp = newBossHp.toNumber()
+            const playerHp = newPlayerHp.toNumber()
+
+            console.log(
+                `AttackComplete: Boss Hp: ${bossHp} Player Hp: ${playerHp}`
+            )
+
+            setBoss((prevState) => {
+                return { ...prevState, hp: bossHp }
+            })
+
+            setCharacterNFT((prevState) => {
+                return { ...prevState, hp: playerHp }
+            })
+        }
+
+        if (gameContract) {
+            fetchBoss()
+            gameContract.on('AttackComplete', onAttackComplete)
+        }
+
+        return () => {
+            if (gameContract) {
+                gameContract.off('AttackComplete', onAttackComplete)
+            }
+        }
+    }, [gameContract])
 
     useEffect(() => {
         const { ethereum } = window
@@ -27,23 +87,19 @@ const Arena = ({ characterNFT }) => {
         } else {
             console.log('Ethereum object not found')
         }
-
-        const fetchBoss = async () => {
-            const bossTxn = await gameContract.getBigBoss()
-            console.log('Boss:', bossTxn)
-            setBoss(transformCharacterData(bossTxn))
-        }
-
-        if (gameContract) {
-            fetchBoss()
-        }
     }, [])
 
     return (
         <div className='arena-container'>
+            {boss && characterNFT && (
+                <div id='toast' className={showToast ? 'show' : ''}>
+                    <div id='desc'>{`💥 ${boss.characterName} was hit for ${characterNFT.attackDamage}!`}</div>
+                </div>
+            )}
+
             {boss && (
                 <div className='boss-container'>
-                    <div className={`boss-content`}>
+                    <div className={`boss-content ${attackState}`}>
                         <h2>🔥 {boss.characterName} 🔥</h2>
                         <div className='image-content'>
                             <img
@@ -64,6 +120,12 @@ const Arena = ({ characterNFT }) => {
                             {`💥 Attack ${boss.characterName}`}
                         </button>
                     </div>
+                    {attackState === 'attacking' && (
+                        <div className='loading-indicator'>
+                            <LoadingIndicator />
+                            <p>Attacking ⚔️</p>
+                        </div>
+                    )}
                 </div>
             )}
 
